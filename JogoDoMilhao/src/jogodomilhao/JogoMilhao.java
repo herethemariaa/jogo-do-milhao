@@ -1,297 +1,140 @@
-package jogodomilhao;
+package br.ucsal.ads.lpa;
 import java.util.Scanner;
 import java.util.Random;
 
-    public class JogoMilhao {
+public class JogoDoMilhaoEquipe2 {
 
-        public static void main(String[] args) {
+	public static void main(String[] args) {
+		iniciarJogo();
+	}
 
-            iniciarJogo();
-        }
+	public static void iniciarJogo() {
+		Scanner scan = new Scanner(System.in);
+		int opc;
 
-        // Visual inicial do projeto + escolha do modo de jogo
-        public static void iniciarJogo() {
-            Scanner scan = new Scanner(System.in);
-            int opc;
+		System.out.println("-------------------------------------------");
+        System.out.println("        BEM-VINDO AO JOGO DO MILHÃO!");
+        System.out.println("-------------------------------------------");					
+
+		while (true) {
+			System.out.println("Escolha o modo de jogo: ");
+			System.out.println("1 - Modo Clássico");
+			System.out.println("2 - Modo Competitivo\n");
+			System.out.print("-> ");
+			opc = scan.nextInt();
+
+			if (opc == 1) {
+				System.out.println("Voce escolheu a o modo classico!");
+				modoClassico();
+				break;
+			} else if (opc == 2) {
+				System.out.println("Voce escolheu o modo competitivo");
+				modoCompetitivo();
+				break;
+			} else {
+				System.out.println("Por favor escolha entre as duas opções!\n");
+			}
+		}
+
+		scan.close();
+	}
+
+	public static void modoClassico() {
+		Scanner scan = new Scanner(System.in);
+		Random rand = new Random();
+
+		int[] indicesUsados = new int[22];
+		String[] perguntas = new String[22];
+		String[][] alternativas = new String[22][4];
+		char[] respostas = new char[22];
+
+		boolean pularUsado = false;
+		boolean eliminarUsado = false;
+		boolean consultarUsado = false;
+		
+		for (int i = 0; i < indicesUsados.length; i++) {
+		    indicesUsados[i] = -1;
+		}
+
+		perguntas(perguntas, alternativas, respostas);
+
+		for (int i = 0; i < 10; i++) {
+			int indicePergunta = sortearPerguntaAleatoria(indicesUsados, rand, i);
+
+			int premio = mostrarPremio(i);
+
+			if (i == 9) {
+				System.out.println("\n--------------------------------------");
+                System.out.println("     PERGUNTA VALENDO 1 MILHÃO ");
+                System.out.println("--------------------------------------");					
+			}
+
+			exibirPerguntas(perguntas[indicePergunta], alternativas[indicePergunta], premio);
+
+			System.out.println("\n ESCOLHA UMA OPÇÃO");
             System.out.println("-------------------------------------------");
-            System.out.println("        BEM-VINDO AO JOGO DO MILHÃO!");
+
+            System.out.println("[A] [B] [C] [D] → Responder");
+
+            System.out.println("\nAJUDAS: ");
+            System.out.println("[U] → Consultar o Amigo");
+            System.out.println("[P] → Pular Pergunta");
+            System.out.println("[E] → Eliminar 2 Alternativas");
+
             System.out.println("-------------------------------------------");
-
-            while (true) {
-                System.out.println("\n             MENU PRINCIPAL\n");
-
-                System.out.println("1 - Modo Clássico");
-                System.out.println("2 - Modo Competitivo");
-
-                System.out.println("-------------------------------------------");
-                System.out.print("Digite sua opção: ");
-                opc = scan.nextInt();
-
-                if (opc == 1) {
-                    System.out.println("Voce escolheu a o modo classico!\n");
-                    modoClassico();
-                    break;
-                } else if (opc == 2) {
-                    System.out.println("Voce escolheu o modo competitivo\n");
-                    modoCompetitivo();
-                    break;
-                } else {
-                    System.out.println("Por favor escolha entre as duas opções!\n");
-                }
-            }
-
-            scan.close();
-        }
-
-
-        // É aqui que o jogo acontece!
-        public static void modoClassico() {
-            Scanner scan = new Scanner(System.in);
-            Random rand = new Random();
-
-            int[] indicesUsados = new int[22];
-            String[] perguntas = new String[22];
-            String[][] alternativas = new String[22][4];
-            char[] respostas = new char[22];
-
-            boolean pularUsado = false;
-            boolean eliminarUsado = false;
-            boolean consultarUsado = false;
-
-            // Chamar o metodo de perguntas
-            perguntas(perguntas, alternativas, respostas);
-
-            for (int i = 0; i < 10; i++) {
-                // VARIAVEL QUE RECEBE O METODO DE SORTEIO DE PERGUNTA;
-                int indicePergunta = sortearPerguntaAleatoria(indicesUsados, rand, i);
-
-                int premio = mostrarPremio(i);
-
-                if (i == 9) {
-                    System.out.println("\n------------------------------------");
-                    System.out.println("     PERGUNTA VALENDO 1 MILHÃO ");
-                    System.out.println("--------------------------------------");
-                }
-
-                exibirPerguntas(perguntas[indicePergunta], alternativas[indicePergunta], premio);
-
-                System.out.println("\n ESCOLHA UMA OPÇÃO");
-                System.out.println("-------------------------------------------");
-
-                System.out.println("[A] [B] [C] [D] → Responder");
-
-                System.out.println("\nAJUDAS: ");
-                System.out.println("[U] → Consultar o Amigo");
-                System.out.println("[P] → Pular Pergunta");
-                System.out.println("[E] → Eliminar 2 Alternativas");
-
-                System.out.println("-------------------------------------------");
-                System.out.print("➜ Sua escolha: ");
-
-
-                char respostaUsuario = scan.next().toUpperCase().charAt(0);
-
-                // Ajuda "Consultar os Amigos":
-                // Se o jogador digitar 'U', o programa verifica se a ajuda ainda está disponível.
-                // A variável consultarUsado começa como false, quer dizer que a ajuda ainda não foi usada.
-                //
-                // Se a ajuda estiver disponível:
-                // - o método consultarAmigo() é chamado;
-                // - consultarUsado passa a ser true e a ajuda não poderá ser usada novamente
-                //
-                // Caso a ajuda já tenha sido usada, o programa informa isso ao jogador.
-                while (respostaUsuario == 'U' || respostaUsuario == 'E' || respostaUsuario == 'P') {
-                    if (respostaUsuario == 'U') {
-
-                        if (!consultarUsado) {
-
-                            consultarAmigo(perguntas[indicePergunta], alternativas[indicePergunta], respostas[indicePergunta]);
-
-                            consultarUsado = true;
-
-                            System.out.println("\nAgora digite sua resposta:");
-                            respostaUsuario = scan.next().toUpperCase().charAt(0);
-                        } else {
-                            System.out.println("Você já utilizou essa ajuda!");
-
-                            System.out.println("Digite sua resposta:");
-                            respostaUsuario = scan.next().toUpperCase().charAt(0);
-                        }
-                    }
-                    // Usar metodo eliminarDuas();
-                    if (respostaUsuario == 'E') {
-                        if (!eliminarUsado) {
-
-                            eliminarRespostas(perguntas[indicePergunta], alternativas[indicePergunta], respostas[indicePergunta]);
-
-                            eliminarUsado = true;
-
-                            System.out.println("\nAgora digite sua resposta:");
-                            respostaUsuario = scan.next().toUpperCase().charAt(0);
-                        } else {
-                            System.out.println("Você já utilizou essa ajuda!");
-
-                            System.out.println("Digite sua resposta:");
-                            respostaUsuario = scan.next().toUpperCase().charAt(0);
-                        }
-                    }
-                    // Usar metodo pularPergunta();
-                    if (respostaUsuario == 'P') {
-                        if (!pularUsado) {
-                            indicePergunta = pularPergunta(indicesUsados, rand, i);
-
-                            pularUsado = true;
-
-                            exibirPerguntas(perguntas[indicePergunta], alternativas[indicePergunta], premio);
-
-                            System.out.println("\nDigite sua resposta:");
-                            respostaUsuario = scan.next().toUpperCase().charAt(0);
-                        } else {
-                            System.out.println("Você já utilizou essa ajuda!");
-
-                            System.out.println("Digite sua resposta:");
-                            respostaUsuario = scan.next().toUpperCase().charAt(0);
-                        }
-
-                    }
-                }
-
-                if (verificarResposta(respostaUsuario, respostas[indicePergunta])) {
-                    System.out.println("\nResposta correta!");
-
-                    if (i == 9) {
-                        System.out.println("Parabéns! Você ganhou 1 milhão! Você venceu o jogo!");
-                    } else {
-                        System.out.println("Próxima pergunta... \n");
-                    }
-
-                } else {
-                    System.out.println("\nResposta errada!");
-                    System.out.println("Você perdeu!");
-                    System.out.println("Finalizando jogo...");
-                    break;
-                }
-
-            }
-            scan.close();
-        }
-
-        // Exibição de perguntas
-        public static void exibirPerguntas(String pergunta, String[] alternativas, int premio) {
-
-            System.out.println("Valendo R$ " + premio);
-
-            System.out.println(pergunta);
-
-            System.out.println("A) " + alternativas[0]);
-            System.out.println("B) " + alternativas[1]);
-            System.out.println("C) " + alternativas[2]);
-            System.out.println("D) " + alternativas[3]);
-        }
-
-        // Verificar se a resposta esta correta
-        public static boolean verificarResposta(char respUsuario, char respCorreta) {
-            return respUsuario == respCorreta;
-        }
-
-        // Metodo dos premios
-        public static int mostrarPremio(int p) {
-
-            int[] premios = {500, 1000, 5000, 10000, 50000, 100000, 250000, 500000, 750000, 1000000};
-            return premios[p];
-        }
-
-        // Metodo para sortear uma pergunta dentro de um VETOR '-'
-        public static int sortearPerguntaAleatoria(int[] indicesUsados, Random rand, int rodada) {
-            boolean duplicado;
-            int i, indice;
-
-            do {
-                indice = rand.nextInt(22);
-                duplicado = false;
-
-                for (i = 0; i < indicesUsados.length; i++) {
-                    if (indicesUsados[i] == indice) {
-                        duplicado = true;
-                        break;
-                    }
-                }
-            } while (duplicado);
-
-            indicesUsados[rodada] = indice;
-            return indice;
-        }
-
-
-        public static void modoCompetitivo() {
-            Scanner scan = new Scanner(System.in);
-            Random rand = new Random();
-
-            int[] indicesUsados = new int[22];
-            String[] perguntas = new String[22];
-            String[][] alternativas = new String[22][4];
-            char[] respostas = new char[22];
-
-            boolean pularUsadoJ1 = false;
-            boolean eliminarUsadoJ1 = false;
-            boolean consultarUsadoJ1 = false;
-            boolean pularUsadoJ2 = false;
-            boolean eliminarUsadoJ2 = false;
-            boolean consultarUsadoJ2 = false;
-
-            String jogador1, jogador2; // identificar os jogadores
-
-            System.out.println("Digite o nome do 1º Jogador: ");
-            jogador1 = scan.nextLine();
-
-            System.out.println("Digite o nome do 2º Jogador: ");
-            jogador2 = scan.nextLine();
-
-
-            //Um vetor de controle para nao repetir nenhuma das 22 perguntas
-            for (int i = 0; i < indicesUsados.length; i++) {
-                indicesUsados[i] = -1;
-            }
-
-            //Chamar o metodo de perguntas
-            perguntas(perguntas, alternativas, respostas);
-
-            //Variaveis que guardam o premio acumulado de cada jogador
-            int premioPlayer1 = 0;
-            int premioPlayer2 = 0;
-
-            //Variaveis que controlam se o jogador ainda esta ativo
-            boolean p1Ativo = true;
-            boolean p2Ativo = true;
-
-            //Variaveis internas para o controle das rodadas de prêmio
-            int rodadaP1 = 0;
-            int rodadaP2 = 0;
-
-            for (int i = 0; i < 20; i++) {
-
-                //Se os dois jogadores erram o jogo acaba
-                if (!p1Ativo && !p2Ativo) {
-                    System.out.println("Ambos os jogadores erraram! Fim de jogo antecipado.");
-                    break;
-                }
-
-                //Se "i" for par é a vez do jogador 1
-                if (i % 2 == 0) {
-                    if (p1Ativo) {
-                        System.out.println("----------------------------------------");
-                        System.out.println("            VEZ DO J1: " + jogador1);
-                        System.out.println("----------------------------------------");
-
-                        //Sorteia uma pergunta que ainda nao saiu
-                        int indicePergunta = sortearPerguntaAleatoria(indicesUsados, rand, i);
-
-                        //Pega o valor do premio baseado em quantas perguntas o P1 ja acertou
-                        int premio = mostrarPremio(rodadaP1);
-
-                        exibirPerguntas(perguntas[indicePergunta], alternativas[indicePergunta], premio);
-
-                        System.out.println("\n ESCOLHA UMA OPÇÃO");
+            System.out.print("➜ Sua escolha: ");
+
+			char respostaUsuario = scan.next().toUpperCase().charAt(0); //confuso
+
+			while (respostaUsuario == 'U' || respostaUsuario == 'E' || respostaUsuario == 'P') {
+				
+				if (respostaUsuario == 'U') {
+
+					if (!consultarUsado) {
+
+						consultarAmigo(perguntas[indicePergunta], alternativas[indicePergunta],
+								respostas[indicePergunta]);
+
+						consultarUsado = true;
+
+						System.out.println("\nAgora digite sua resposta:");
+						respostaUsuario = scan.next().toUpperCase().charAt(0);
+					}
+
+					else {
+						System.out.println("Você já utilizou essa ajuda!");
+
+						System.out.println("Digite sua resposta:");
+						respostaUsuario = scan.next().toUpperCase().charAt(0);
+					}
+				}
+				
+				if (respostaUsuario == 'E') {
+					if (!eliminarUsado) {
+
+						eliminarRespostas(perguntas[indicePergunta], alternativas[indicePergunta],
+								respostas[indicePergunta]);
+						
+						eliminarUsado = true;
+
+						System.out.println("\nAgora digite sua resposta:");
+						respostaUsuario = scan.next().toUpperCase().charAt(0);
+					} else {
+						System.out.println("Você já utilizou essa ajuda!");
+
+						System.out.println("Digite sua resposta:");
+						respostaUsuario = scan.next().toUpperCase().charAt(0);
+					}
+				}
+				
+				if (respostaUsuario == 'P') {
+					if (!pularUsado) {
+						indicePergunta = pularPergunta(indicesUsados, rand, i);
+
+						pularUsado = true;
+
+						exibirPerguntas(perguntas[indicePergunta], alternativas[indicePergunta], premio);
+						System.out.println("\n ESCOLHA UMA OPÇÃO");
                         System.out.println("-------------------------------------------");
 
                         System.out.println("[A] [B] [C] [D] → Responder");
@@ -303,522 +146,690 @@ import java.util.Random;
 
                         System.out.println("-------------------------------------------");
                         System.out.print("➜ Sua escolha: ");
-                        char respostaUsuario = scan.next().toUpperCase().charAt(0);
-
-                        while (respostaUsuario == 'U' || respostaUsuario == 'E' || respostaUsuario == 'P') { //Futuramente entrará o 'P' aqui
-                            if (respostaUsuario == 'U') {
-
-                                if (!consultarUsadoJ1) {
-
-                                    consultarAmigo(perguntas[indicePergunta], alternativas[indicePergunta], respostas[indicePergunta]);
 
-                                    consultarUsadoJ1 = true;
-
-                                    System.out.println("\nAgora digite sua resposta:");
-                                    respostaUsuario = scan.next().toUpperCase().charAt(0);
-                                } else {
-                                    System.out.println("Você já utilizou essa ajuda!");
-
-                                    System.out.println("Digite sua resposta:");
-                                    respostaUsuario = scan.next().toUpperCase().charAt(0);
-                                }
-                            }
-                            // Usar metodo eliminarDuas();
-                            if (respostaUsuario == 'E') {
-                                if (!eliminarUsadoJ1) {
-
-                                    eliminarRespostas(perguntas[indicePergunta], alternativas[indicePergunta], respostas[indicePergunta]);
-
-                                    eliminarUsadoJ1 = true;
-
-                                    System.out.println("\nAgora digite sua resposta:");
-                                    respostaUsuario = scan.next().toUpperCase().charAt(0);
-                                } else {
-                                    System.out.println("Você já utilizou essa ajuda!");
-
-                                    System.out.println("Digite sua resposta:");
-                                    respostaUsuario = scan.next().toUpperCase().charAt(0);
-                                }
-                            }
-                            // Usar metodo pularPergunta();
-                            if (respostaUsuario == 'P') {
-                                if (!pularUsadoJ1) {
-                                    indicePergunta = pularPergunta(indicesUsados, rand, i);
-
-                                    pularUsadoJ1 = true;
-                                    System.out.println("----------------------------------------");
-                                    System.out.println("            VEZ DO J1: " + jogador1);
-                                    System.out.println("----------------------------------------");
-
-                                    exibirPerguntas(perguntas[indicePergunta], alternativas[indicePergunta], premio);
-
-                                    System.out.println("\nDigite sua resposta:");
-                                    respostaUsuario = scan.next().toUpperCase().charAt(0);
-                                } else {
-                                    System.out.println("Você já utilizou essa ajuda!");
-
-                                    System.out.println("Digite sua resposta:");
-                                    respostaUsuario = scan.next().toUpperCase().charAt(0);
-                                }
-
-                            }
-                        }
-
-                        if (verificarResposta(respostaUsuario, respostas[indicePergunta])) {
-                            System.out.println("\n-> Resposta correta, Jogador 1");
-                            premioPlayer1 = premio;
-                            rodadaP1++;
-                        } else {
-                            System.out.println("\n-> Resposta errada! Jogador 1 (" + jogador1 + ") foi eliminado");
-                            p1Ativo = false;
-                        }
-                    } else {
-                        System.out.println("(Jogador 1 (" + jogador1 + ")eliminado - Passando a vez)");
-                    }
-                }
-                //Se "i" for impar é a vez do segundo jogador
-                else {
-                    if (p2Ativo) {
-                        System.out.println("----------------------------------------");
-                        System.out.println("          VEZ DO J2: " + jogador2);
-                        System.out.println("----------------------------------------");
-
-                        int indicePergunta = sortearPerguntaAleatoria(indicesUsados, rand, i);
-                        int premio = mostrarPremio(rodadaP2);
-
-                        exibirPerguntas(perguntas[indicePergunta], alternativas[indicePergunta], premio);
-
-                        System.out.println("\n ESCOLHA UMA OPÇÃO");
-                        System.out.println("-------------------------------------------");
-
-                        System.out.println("[A] [B] [C] [D] → Responder");
-
-                        System.out.println("\nAJUDAS: ");
-                        System.out.println("[U] → Consultar o Amigo");
-                        System.out.println("[P] → Pular Pergunta");
-                        System.out.println("[E] → Eliminar 2 Alternativas");
-
-                        System.out.println("-------------------------------------------");
-                        System.out.print("➜ Sua escolha: ");
-                        char respostaUsuario = scan.next().toUpperCase().charAt(0);
-
-                        while (respostaUsuario == 'U' || respostaUsuario == 'E' || respostaUsuario == 'P') { //Futuramente entrará o 'P' aqui
-                            if (respostaUsuario == 'U') {
-
-                                if (!consultarUsadoJ2) {
-
-                                    consultarAmigo(perguntas[indicePergunta], alternativas[indicePergunta], respostas[indicePergunta]);
-
-                                    consultarUsadoJ2 = true;
-
-                                    System.out.println("\nAgora digite sua resposta:");
-                                    respostaUsuario = scan.next().toUpperCase().charAt(0);
-                                } else {
-                                    System.out.println("Você já utilizou essa ajuda!");
-
-                                    System.out.println("Digite sua resposta:");
-                                    respostaUsuario = scan.next().toUpperCase().charAt(0);
-                                }
-                            }
-                            // Usar metodo eliminarDuas();
-                            if (respostaUsuario == 'E') {
-                                if (!eliminarUsadoJ2) {
-
-                                    eliminarRespostas(perguntas[indicePergunta], alternativas[indicePergunta], respostas[indicePergunta]);
-
-                                    eliminarUsadoJ2 = true;
-
-                                    System.out.println("\nAgora digite sua resposta:");
-                                    respostaUsuario = scan.next().toUpperCase().charAt(0);
-                                } else {
-                                    System.out.println("Você já utilizou essa ajuda!");
-
-                                    System.out.println("Digite sua resposta:");
-                                    respostaUsuario = scan.next().toUpperCase().charAt(0);
-                                }
-                            }
-                            // Usar metodo pularPergunta();
-                            if (respostaUsuario == 'P') {
-                                if (!pularUsadoJ2) {
-                                    indicePergunta = pularPergunta(indicesUsados, rand, i);
-
-                                    pularUsadoJ2 = true;
-
-                                    exibirPerguntas(perguntas[indicePergunta], alternativas[indicePergunta], premio);
-
-                                    System.out.println("\nDigite sua resposta:");
-                                    respostaUsuario = scan.next().toUpperCase().charAt(0);
-                                } else {
-                                    System.out.println("Você já utilizou essa ajuda!");
-
-                                    System.out.println("Digite sua resposta:");
-                                    respostaUsuario = scan.next().toUpperCase().charAt(0);
-                                }
-
-                            }
-                        }
-
-                        if (verificarResposta(respostaUsuario, respostas[indicePergunta])) {
-                            System.out.println("\n-> Resposta correta, Jogador 2");
-                            premioPlayer2 = premio;
-                            rodadaP2++;
-                        } else {
-                            System.out.println("\n-> Resposta errada! Jogador 2 (" + jogador2 + ") foi eliminado");
-                            p2Ativo = false;
-                        }
-                    } else {
-                        System.out.println("(Jogador 2 (" + jogador2 + "+ eliminado - Passando a vez)");
-                    }
-                }
-            }
-            System.out.println("\n-------------------------------------------");
-            System.out.println("|               FIM DE JOGO               |");
-            System.out.println("-------------------------------------------");
-            System.out.println("Placar Final:");
-            System.out.println(jogador1 + " terminou com: R$ " + premioPlayer1);
-            System.out.println(jogador2 + " terminou com: R$ " + premioPlayer2);
-            System.out.println("-------------------------------------------");
+						respostaUsuario = scan.next().toUpperCase().charAt(0);
+					} else {
+						System.out.println("Você já utilizou essa ajuda!");
+
+						System.out.println("Digite sua resposta:");
+						respostaUsuario = scan.next().toUpperCase().charAt(0);
+					}
+
+				}
+			}
+
+			if (verificarResposta(respostaUsuario, respostas[indicePergunta])) {
+				System.out.println("\nResposta correta!");
+
+				if (i == 9) {
+					System.out.println("---------------------------------------------------");
+					System.out.println("Parabéns! Você ganhou 1 milhão! Você venceu o jogo!");
+					System.out.println("---------------------------------------------------");
+				} else {
+					System.out.println("Próxima pergunta... \n");
+				}
 
-            if (premioPlayer1 > premioPlayer2) {
-                System.out.println("Parabéns " + jogador1 + "! Você venceu");
-            } else if (premioPlayer2 > premioPlayer1) {
-                System.out.println("Parabéns " + jogador2 + "! Você venceu");
-            } else {
-                System.out.println("Temos um empate!");
-            }
-
+			} else {
+				System.out.println("\nResposta errada!");
+				System.out.println("Você perdeu!");
+				System.out.println("Finalizando jogo...");
+				break;
+			}
+
+		}
+		scan.close();
+	}
 
-            scan.close();
-        }// metodo
+	public static void exibirPerguntas(String pergunta, String[] alternativas, int premio) {
+		
+		System.out.println("Valendo R$ " + premio);
 
+		System.out.println(pergunta);
 
-        // Metodo Ajuda: consultarAmigo();
-        public static void consultarAmigo(String pergunta, String[] alternativas, char respostaCorreta) {
-            Random rand = new Random();
-            System.out.println("Estou pensando, aguarde...");
-            System.out.println(pergunta);
-
-            System.out.println("A) " + alternativas[0]);
-            System.out.println("B) " + alternativas[1]);
-            System.out.println("C) " + alternativas[2]);
-            System.out.println("D) " + alternativas[3]);
+		System.out.println("A) " + alternativas[0]);
+		System.out.println("B) " + alternativas[1]);
+		System.out.println("C) " + alternativas[2]);
+		System.out.println("D) " + alternativas[3]);
+	}
 
-            int chance = rand.nextInt(2);
-            char sugestao;
+	public static boolean verificarResposta(char respUsuario, char respCorreta) {
+		return respUsuario == respCorreta;
+	}
 
-            if (chance == 0) {
-                sugestao = respostaCorreta;
+	public static int mostrarPremio(int p) {
 
-            } else {
+		int[] premios = { 500, 1000, 5000, 10000, 50000, 100000, 250000, 500000, 750000, 1000000 };
+		return premios[p];
+	}
 
-                if (respostaCorreta != 'A') {
-                    sugestao = 'A';
-                } else if (respostaCorreta != 'B') {
-                    sugestao = 'B';
-                } else if (respostaCorreta != 'C') {
-                    sugestao = 'C';
-                } else {
-                    sugestao = 'D';
-                }
-            }
+	public static int sortearPerguntaAleatoria(int[] indicesUsados, Random rand, int rodada) {
+		boolean duplicado;
+		int i, indice;
 
-            System.out.println("Tente a alternativa: " + sugestao);
-        }
+		do {
+			indice = rand.nextInt(22);
+			duplicado = false;
 
-        //Metodo Ajuda: pularPergunta();
-        public static int pularPergunta(int[] indicesUsados, Random rand, int rodada) {
-            System.out.println("Pergunta pulada!");
-            System.out.println("Sorteando nova pergunta...\n ");
+			for (i = 0; i < indicesUsados.length; i++) {
+				if (indicesUsados[i] == indice) {
+					duplicado = true;
+					break;
+				}
+			}
+		} while (duplicado);
 
-            return sortearPerguntaAleatoria(indicesUsados, rand, rodada);
+		indicesUsados[rodada] = indice;
+		return indice;
+	}
 
-        }
+	public static void modoCompetitivo() {
+		Scanner scan = new Scanner(System.in);
+		Random rand = new Random();
 
-        //Metodo Ajuda: eliminarDuas();
-        public static boolean eliminarRespostas(String pergunta, String[] alternativas, char respostaCorreta) {
+		int[] indicesUsados = new int[22];
+		String[] perguntas = new String[22];
+		String[][] alternativas = new String[22][4];
+		char[] respostas = new char[22];
 
-            System.out.println(pergunta);
+		boolean pularUsadoJ1 = false;
+		boolean eliminarUsadoJ1 = false;
+		boolean consultarUsadoJ1 = false;
+		boolean pularUsadoJ2 = false;
+		boolean eliminarUsadoJ2 = false;
+		boolean consultarUsadoJ2 = false;
 
-            int indexCerta;
-            boolean checkErrada = true;
-            String letraAlternativa;
+		String jogador1, jogador2; 
 
-            if (respostaCorreta == 'A') {
-                indexCerta = 0;
+		System.out.println("Digite o nome do 1º Jogador: ");
+		jogador1 = scan.nextLine();
 
-            } else if (respostaCorreta == 'B') {
-                indexCerta = 1;
+		System.out.println("Digite o nome do 2º Jogador: ");
+		jogador2 = scan.nextLine();
 
-            } else if (respostaCorreta == 'C') {
-                indexCerta = 2;
+		for (int i = 0; i < indicesUsados.length; i++) {
+			indicesUsados[i] = -1;
+		}
 
-            } else {
-                indexCerta = 3;
-            }
+		perguntas(perguntas, alternativas, respostas);
 
-            for (int i = 0; i < 4; i++) {
+		int premioPlayer1 = 0;
+		int premioPlayer2 = 0;
 
-                if (i == indexCerta) {
-                    System.out.println(respostaCorreta + ") " + alternativas[i]);
-                }
+		boolean p1Ativo = true;
+		boolean p2Ativo = true;
 
-                if (checkErrada) {
+		int rodadaP1 = 0;
+		int rodadaP2 = 0;
 
-                    if (i != indexCerta) {
+		for (int i = 0; i < 20; i++) {
 
-                        if (i == 0) {
-                            letraAlternativa = "A) ";
+			if (!p1Ativo && !p2Ativo) {
+				System.out.println("Ambos os jogadores erraram! Fim de jogo antecipado.");
+				break;
+			}
 
-                        } else if (i == 1) {
-                            letraAlternativa = "B) ";
+			if (i % 2 == 0) {
+				if (p1Ativo) {
+					System.out.println("----------------------------------------");
+					System.out.println("            VEZ DO J1: " + jogador1);
+					System.out.println("----------------------------------------");
 
-                        } else if (i == 2) {
-                            letraAlternativa = "C) ";
+					int indicePergunta = sortearPerguntaAleatoria(indicesUsados, rand, i);
 
-                        } else {
-                            letraAlternativa = "D) ";
+					int premio = mostrarPremio(rodadaP1);
 
-                        }
-                        System.out.println(letraAlternativa + alternativas[i]);
-                        checkErrada = false;
-                    }
-                }
-            }
-            return false;
-        }
+					exibirPerguntas(perguntas[indicePergunta], alternativas[indicePergunta], premio);
 
+					System.out.println("\n ESCOLHA UMA OPÇÃO");
+                    System.out.println("-------------------------------------------");
 
-        // Banco de Perguntas manual.
-        public static void perguntas(String[] perguntas, String[][] alternativas, char[] respostas) {
-            // -----------------------------------------------------------------------------------------------------
-            perguntas[0] = "Qual a capital do Brasil?";
+                    System.out.println("[A] [B] [C] [D] → Responder");
+
+                    System.out.println("\nAJUDAS: ");
+                    System.out.println("[U] → Consultar o Amigo");
+                    System.out.println("[P] → Pular Pergunta");
+                    System.out.println("[E] → Eliminar 2 Alternativas");
+
+                    System.out.println("-------------------------------------------");
+                    System.out.print("➜ Sua escolha: ");
+					char respostaUsuario = scan.next().toUpperCase().charAt(0);
 
-            alternativas[0][0] = "São Paulo";
-            alternativas[0][1] = "Rio de Janeiro";
-            alternativas[0][2] = "Brasília";
-            alternativas[0][3] = "Salvador";
+					while (respostaUsuario == 'U' || respostaUsuario == 'E' || respostaUsuario == 'P') { 
+						
+						if (respostaUsuario == 'U') {
 
-            respostas[0] = 'C';
+							if (!consultarUsadoJ1) {
 
-            // -----------------------------------------------------------------------------------------------------
-            perguntas[1] = "O pó-de-mico quando entra em contato com a pele provoca qual tipo de reação?";
+								consultarAmigo(perguntas[indicePergunta], alternativas[indicePergunta],
+										respostas[indicePergunta]);
 
-            alternativas[1][0] = "Cócegas";
-            alternativas[1][1] = "Dor";
-            alternativas[1][2] = "Frio";
-            alternativas[1][3] = "Tristeza";
+								consultarUsadoJ1 = true;
 
-            respostas[1] = 'A';
+								System.out.println("\nAgora digite sua resposta:");
+								respostaUsuario = scan.next().toUpperCase().charAt(0);
+							}
 
-            // -----------------------------------------------------------------------------------------------------
-            perguntas[2] = "Em qual país reinou a dinastia Romanov?";
+							else {
+								System.out.println("Você já utilizou essa ajuda!");
 
-            alternativas[2][0] = "Itália";
-            alternativas[2][1] = "Espanha";
-            alternativas[2][2] = "Alemanha";
-            alternativas[2][3] = "Rússia";
+								System.out.println("Digite sua resposta:");
+								respostaUsuario = scan.next().toUpperCase().charAt(0);
+							}
+						}
+						
+						if (respostaUsuario == 'E') {
+							if (!eliminarUsadoJ1) {
 
-            respostas[2] = 'D';
+								eliminarRespostas(perguntas[indicePergunta], alternativas[indicePergunta],
+										respostas[indicePergunta]);
 
-            // -----------------------------------------------------------------------------------------------------
-            perguntas[3] = "Bagaceira é o nome dado à aguardente de: ";
+								eliminarUsadoJ1 = true;
 
-            alternativas[3][0] = "Jaboticaba";
-            alternativas[3][1] = "Pêra";
-            alternativas[3][2] = "Maçã";
-            alternativas[3][3] = "Uva";
+								System.out.println("\nAgora digite sua resposta:");
+								respostaUsuario = scan.next().toUpperCase().charAt(0);
+							} else {
+								System.out.println("Você já utilizou essa ajuda!");
 
-            respostas[3] = 'D';
+								System.out.println("Digite sua resposta:");
+								respostaUsuario = scan.next().toUpperCase().charAt(0);
+							}
+						}
+					
+						if (respostaUsuario == 'P') {
+							if (!pularUsadoJ1) {
+								indicePergunta = pularPergunta(indicesUsados, rand, i);
 
-            // -----------------------------------------------------------------------------------------------------
+								pularUsadoJ1 = true;
+								System.out.println("----------------------------------------");
+								System.out.println("            VEZ DO J1: " + jogador1);
+								System.out.println("----------------------------------------");
 
-            perguntas[4] = "Quantos dias tem um ano bissexto? ";
+								exibirPerguntas(perguntas[indicePergunta], alternativas[indicePergunta], premio);
+								System.out.println("\n ESCOLHA UMA OPÇÃO");
+		                        System.out.println("-------------------------------------------");
 
-            alternativas[4][0] = "365";
-            alternativas[4][1] = "364";
-            alternativas[4][2] = "366";
-            alternativas[4][3] = "360";
+		                        System.out.println("[A] [B] [C] [D] → Responder");
 
-            respostas[4] = 'C';
+		                        System.out.println("\nAJUDAS: ");
+		                        System.out.println("[U] → Consultar o Amigo");
+		                        System.out.println("[P] → Pular Pergunta");
+		                        System.out.println("[E] → Eliminar 2 Alternativas");
 
-            // -----------------------------------------------------------------------------------------------------
-            perguntas[5] = "Qual é o maior oceano da Terra? ";
+		                        System.out.println("-------------------------------------------");
+		                        System.out.print("➜ Sua escolha: ");
 
-            alternativas[5][0] = "Atlântico";
-            alternativas[5][1] = "Índico";
-            alternativas[5][2] = "Ártico";
-            alternativas[5][3] = "Pacífico";
+								respostaUsuario = scan.next().toUpperCase().charAt(0);
+							} else {
+								System.out.println("Você já utilizou essa ajuda!");
 
-            respostas[5] = 'D';
+								System.out.println("Digite sua resposta:");
+								respostaUsuario = scan.next().toUpperCase().charAt(0);
+							}
 
-            // -----------------------------------------------------------------------------------------------------
-            perguntas[6] = "Quem pintou a obra Mona Lisa? ";
+						}
+					}
 
-            alternativas[6][0] = "Pablo Picasso";
-            alternativas[6][1] = "Vicent Van Gogh";
-            alternativas[6][2] = "Leonardo da Vinci";
-            alternativas[6][3] = "Michelangelo";
+					if (verificarResposta(respostaUsuario, respostas[indicePergunta])) {
+						System.out.println("\n-> Resposta correta, Jogador 1");
+						premioPlayer1 = premio;
+						rodadaP1++;
+					} else {
+						System.out.println("\n-> Resposta errada! Jogador 1 (" + jogador1 + ") foi eliminado");
+						p1Ativo = false;
+					}
+				} else {
+					System.out.println("(Jogador 1 (" + jogador1 + ") eliminado - Passando a vez)");
+				}
+			}
+			
+			else {
+				if (p2Ativo) {
+					System.out.println("----------------------------------------");
+					System.out.println("          VEZ DO J2: " + jogador2);
+					System.out.println("----------------------------------------");
+
+					int indicePergunta = sortearPerguntaAleatoria(indicesUsados, rand, i);
+					int premio = mostrarPremio(rodadaP2);
+
+					exibirPerguntas(perguntas[indicePergunta], alternativas[indicePergunta], premio);
+
+					System.out.println("\n ESCOLHA UMA OPÇÃO");
+                    System.out.println("-------------------------------------------");
+
+                    System.out.println("[A] [B] [C] [D] → Responder");
+
+                    System.out.println("\nAJUDAS: ");
+                    System.out.println("[U] → Consultar o Amigo");
+                    System.out.println("[P] → Pular Pergunta");
+                    System.out.println("[E] → Eliminar 2 Alternativas");
+
+                    System.out.println("-------------------------------------------");
+                    System.out.print("➜ Sua escolha: ");
+					char respostaUsuario = scan.next().toUpperCase().charAt(0);
+
+					while (respostaUsuario == 'U' || respostaUsuario == 'E' || respostaUsuario == 'P') { 
+						if (respostaUsuario == 'U') {
+
+							if (!consultarUsadoJ2) {
+
+								consultarAmigo(perguntas[indicePergunta], alternativas[indicePergunta],
+										respostas[indicePergunta]);
+
+								consultarUsadoJ2 = true;
+
+								System.out.println("\nAgora digite sua resposta:");
+								respostaUsuario = scan.next().toUpperCase().charAt(0);
+							}
+
+							else {
+								System.out.println("Você já utilizou essa ajuda!");
+
+								System.out.println("Digite sua resposta:");
+								respostaUsuario = scan.next().toUpperCase().charAt(0);
+							}
+						}
+					
+						if (respostaUsuario == 'E') {
+							if (!eliminarUsadoJ2) {
+
+								eliminarRespostas(perguntas[indicePergunta], alternativas[indicePergunta],
+										respostas[indicePergunta]);
+
+								eliminarUsadoJ2 = true;
+
+								System.out.println("\nAgora digite sua resposta:");
+								respostaUsuario = scan.next().toUpperCase().charAt(0);
+							} else {
+								System.out.println("Você já utilizou essa ajuda!");
+
+								System.out.println("Digite sua resposta:");
+								respostaUsuario = scan.next().toUpperCase().charAt(0);
+							}
+						}
+						
+						if (respostaUsuario == 'P') {
+							if (!pularUsadoJ2) {
+								indicePergunta = pularPergunta(indicesUsados, rand, i);
+
+								pularUsadoJ2 = true;
+								System.out.println("----------------------------------------");
+								System.out.println("            VEZ DO J2: " + jogador2);
+								System.out.println("----------------------------------------");
+
+								exibirPerguntas(perguntas[indicePergunta], alternativas[indicePergunta], premio);
+								System.out.println("\n ESCOLHA UMA OPÇÃO");
+		                        System.out.println("-------------------------------------------");
+
+		                        System.out.println("[A] [B] [C] [D] → Responder");
+
+		                        System.out.println("\nAJUDAS: ");
+		                        System.out.println("[U] → Consultar o Amigo");
+		                        System.out.println("[P] → Pular Pergunta");
+		                        System.out.println("[E] → Eliminar 2 Alternativas");
+
+		                        System.out.println("-------------------------------------------");
+		                        System.out.print("➜ Sua escolha: ");
+								
+								respostaUsuario = scan.next().toUpperCase().charAt(0);
+							} else {
+								System.out.println("Você já utilizou essa ajuda!");
+
+								System.out.println("Digite sua resposta:");
+								respostaUsuario = scan.next().toUpperCase().charAt(0);
+							}
+
+						}
+					}
+
+					if (verificarResposta(respostaUsuario, respostas[indicePergunta])) {
+						System.out.println("\n-> Resposta correta, Jogador 2");
+						premioPlayer2 = premio;
+						rodadaP2++;
+					} else {
+						System.out.println("\n-> Resposta errada! Jogador 2 (" + jogador2 + ") foi eliminado");
+						p2Ativo = false;
+					}
+				} else {
+					System.out.println("(Jogador 2 (" + jogador2 + ") eliminado - Passando a vez)");
+				}
+			}
+		}
+		System.out.println("\n-------------------------------------------");
+		System.out.println("|               FIM DE JOGO               |");
+		System.out.println("-------------------------------------------");
+		System.out.println("Placar Final:");
+		System.out.println(jogador1 + " terminou com: R$ " + premioPlayer1);
+		System.out.println(jogador2 + " terminou com: R$ " + premioPlayer2);
+		System.out.println("-------------------------------------------");
+
+		if (premioPlayer1 > premioPlayer2) {
+			System.out.println("Parabéns " + jogador1 + "! Você venceu");
+		} else if (premioPlayer2 > premioPlayer1) {
+			System.out.println("Parabéns " + jogador2 + "! Você venceu");
+		} else {
+			System.out.println("Temos um empate!");
+		}
+
+		scan.close();
+	}
+
+	public static void consultarAmigo(String pergunta, String[] alternativas, char respostaCorreta) {
+		Random rand = new Random();
+		System.out.println("Estou pensando, aguarde...");
+		System.out.println(pergunta);
+
+		System.out.println("A) " + alternativas[0]);
+		System.out.println("B) " + alternativas[1]);
+		System.out.println("C) " + alternativas[2]);
+		System.out.println("D) " + alternativas[3]);
+
+		int indiceCerto, indiceErrado;
+		int chance = rand.nextInt(2);
+		char sugestao;
+
+		if (respostaCorreta == 'A') {
+			indiceCerto = 0;
+		} else if (respostaCorreta == 'B') {
+			indiceCerto = 1;
+		} else if (respostaCorreta == 'C') {
+			indiceCerto = 2;
+		} else {
+			indiceCerto = 3;
+		}
+
+		if (chance == 0) {
+			sugestao = respostaCorreta;
+
+		} else {
+
+			do {
+				indiceErrado = rand.nextInt(4);
+			} while (indiceErrado == indiceCerto);
+
+			if (indiceErrado == 0) {
+				sugestao = 'A';
+			} else if (indiceErrado == 1) {
+				sugestao = 'B';
+			} else if (indiceErrado == 2) {
+				sugestao = 'C';
+			} else {
+				sugestao = 'D';
+			}
+		}
+
+		System.out.println("Tente a alternativa: " + sugestao);
+	}
+
+	public static int pularPergunta(int[] indicesUsados, Random rand, int rodada) {
+		System.out.println("\nPergunta pulada!");
+		System.out.println("Sorteando nova pergunta...\n ");
+
+		return sortearPerguntaAleatoria(indicesUsados, rand, rodada);
+
+	}
+
+	public static void eliminarRespostas(String pergunta, String[] alternativas, char respostaCorreta) {
+
+		Random rand = new Random();
+
+		System.out.println(pergunta);
+
+		int indexCerta;
+		int indiceErrado;
+		String letraAlternativa;
+
+		if (respostaCorreta == 'A') {
+			indexCerta = 0;
+		} else if (respostaCorreta == 'B') {
+			indexCerta = 1;
+		} else if (respostaCorreta == 'C') {
+			indexCerta = 2;
+		} else {
+			indexCerta = 3;
+		}
+
+		do {
+			indiceErrado = rand.nextInt(4);
+		} while (indiceErrado == indexCerta);
+
+		for (int i = 0; i < 4; i++) {
+
+			if (i == indexCerta || i == indiceErrado) {
+
+				if (i == 0) {
+					letraAlternativa = "A";
+				} else if (i == 1) {
+					letraAlternativa = "B";
+				} else if (i == 2) {
+					letraAlternativa = "C";
+				} else {
+					letraAlternativa = "D";
+				}
+
+				System.out.println(letraAlternativa + ") " + alternativas[i]);
+	            
+			}
+		}
+	}
+
+	public static void perguntas(String[] perguntas, String[][] alternativas, char[] respostas) {
+		perguntas[0] = "Qual a capital do Brasil?";
+
+		alternativas[0][0] = "São Paulo";
+		alternativas[0][1] = "Rio de Janeiro";
+		alternativas[0][2] = "Brasília";
+		alternativas[0][3] = "Salvador";
+
+		respostas[0] = 'C';
+
+		
+		perguntas[1] = "O pó-de-mico quando entra em contato com a pele provoca qual tipo de reação?";
+
+		alternativas[1][0] = "Cócegas";
+		alternativas[1][1] = "Dor";
+		alternativas[1][2] = "Frio";
+		alternativas[1][3] = "Tristeza";
+
+		respostas[1] = 'A';
+
+		
+		perguntas[2] = "Em qual país reinou a dinastia Romanov?";
+
+		alternativas[2][0] = "Itália";
+		alternativas[2][1] = "Espanha";
+		alternativas[2][2] = "Alemanha";
+		alternativas[2][3] = "Rússia";
+
+		respostas[2] = 'D';
+
+		
+		perguntas[3] = "Bagaceira é o nome dado à aguardente de: ";
+
+		alternativas[3][0] = "Jaboticaba";
+		alternativas[3][1] = "Pêra";
+		alternativas[3][2] = "Maçã";
+		alternativas[3][3] = "Uva";
+
+		respostas[3] = 'D';
+
 
-            respostas[6] = 'C';
+		perguntas[4] = "Quantos dias tem um ano bissexto? ";
 
-            // -----------------------------------------------------------------------------------------------------
-            perguntas[7] = "Quem formulou as três leis do movimento clássico? ";
+		alternativas[4][0] = "365";
+		alternativas[4][1] = "364";
+		alternativas[4][2] = "366";
+		alternativas[4][3] = "360";
+
+		respostas[4] = 'C';
 
-            alternativas[7][0] = "Albert Einstein";
-            alternativas[7][1] = "Isaac Newton";
-            alternativas[7][2] = "Galileu Galilei";
-            alternativas[7][3] = "Johannes Kepler";
+		
+		perguntas[5] = "Qual é o maior oceano da Terra? ";
 
-            respostas[7] = 'B';
+		alternativas[5][0] = "Atlântico";
+		alternativas[5][1] = "Índico";
+		alternativas[5][2] = "Ártico";
+		alternativas[5][3] = "Pacífico";
 
-            // -----------------------------------------------------------------------------------------------------
-            perguntas[8] = "Em qual ano ocorreu a queda do Muro de Berlim? ";
+		respostas[5] = 'D';
 
-            alternativas[8][0] = "1987";
-            alternativas[8][1] = "1988";
-            alternativas[8][2] = "1989";
-            alternativas[8][3] = "1991";
+		
+		perguntas[6] = "Quem pintou a obra Mona Lisa? ";
 
-            respostas[8] = 'C';
+		alternativas[6][0] = "Pablo Picasso";
+		alternativas[6][1] = "Vicent Van Gogh";
+		alternativas[6][2] = "Leonardo da Vinci";
+		alternativas[6][3] = "Michelangelo";
 
-            // -----------------------------------------------------------------------------------------------------
-            perguntas[9] = "Qual é o menor estado do Brasil em território? ";
+		respostas[6] = 'C';
 
-            alternativas[9][0] = "Sergipe";
-            alternativas[9][1] = "Alagoas";
-            alternativas[9][2] = "Rio de Janeiro";
-            alternativas[9][3] = "Espírito Santo";
+		
+		perguntas[7] = "Quem formulou as três leis do movimento clássico? ";
 
-            respostas[9] = 'A';
+		alternativas[7][0] = "Albert Einstein";
+		alternativas[7][1] = "Isaac Newton";
+		alternativas[7][2] = "Galileu Galilei";
+		alternativas[7][3] = "Johannes Kepler";
 
-            // -----------------------------------------------------------------------------------------------------
-            perguntas[10] = "Qual é o nome do processo em que a água vira vapor? ";
+		respostas[7] = 'B';
 
-            alternativas[10][0] = "Condensação";
-            alternativas[10][1] = "Solidificação";
-            alternativas[10][2] = "Evaporação";
-            alternativas[10][3] = "Fusão";
+		
+		perguntas[8] = "Em qual ano ocorreu a queda do Muro de Berlim? ";
 
-            respostas[10] = 'C';
+		alternativas[8][0] = "1987";
+		alternativas[8][1] = "1988";
+		alternativas[8][2] = "1989";
+		alternativas[8][3] = "1991";
 
-            // -----------------------------------------------------------------------------------------------------
-            perguntas[11] = "Quantos estados tem o Brasil? ";
+		respostas[8] = 'C';
 
-            alternativas[11][0] = "24";
-            alternativas[11][1] = "25";
-            alternativas[11][2] = "26";
-            alternativas[11][3] = "27";
+		
+		perguntas[9] = "Qual é o menor estado do Brasil em território? ";
 
-            respostas[11] = 'D';
+		alternativas[9][0] = "Sergipe";
+		alternativas[9][1] = "Alagoas";
+		alternativas[9][2] = "Rio de Janeiro";
+		alternativas[9][3] = "Espírito Santo";
 
-            // -----------------------------------------------------------------------------------------------------
-            perguntas[12] = "Quem foi o primeiro presidente do Brasil? ";
+		respostas[9] = 'A';
 
-            alternativas[12][0] = "Getúlio Vargas";
-            alternativas[12][1] = "Deodoro da Fonseca";
-            alternativas[12][2] = "Juscelino Kubitschek";
-            alternativas[12][3] = "Floriano Peixoto";
+		
+		perguntas[10] = "Qual é o nome do processo em que a água vira vapor? ";
 
-            respostas[12] = 'B';
+		alternativas[10][0] = "Condensação";
+		alternativas[10][1] = "Solidificação";
+		alternativas[10][2] = "Evaporação";
+		alternativas[10][3] = "Fusão";
 
-            // -----------------------------------------------------------------------------------------------------
-            perguntas[13] = "Qual é o maior animal do planeta? ";
+		respostas[10] = 'C';
 
-            alternativas[13][0] = "Elefante";
-            alternativas[13][1] = "Tubarão-branco";
-            alternativas[13][2] = "Baleia-azul";
-            alternativas[13][3] = "Girafa";
+		
+		perguntas[11] = "Quantos estados tem o Brasil? ";
 
-            respostas[13] = 'C';
+		alternativas[11][0] = "24";
+		alternativas[11][1] = "25";
+		alternativas[11][2] = "26";
+		alternativas[11][3] = "27";
 
-            // -----------------------------------------------------------------------------------------------------
-            perguntas[14] = "Qual é o símbolo químico do ouro? ";
+		respostas[11] = 'D';
 
-            alternativas[14][0] = "Ag";
-            alternativas[14][1] = "Au";
-            alternativas[14][2] = "O";
-            alternativas[14][3] = "Gd";
+		
+		perguntas[12] = "Quem foi o primeiro presidente do Brasil? ";
 
-            respostas[14] = 'B';
+		alternativas[12][0] = "Getúlio Vargas";
+		alternativas[12][1] = "Deodoro da Fonseca";
+		alternativas[12][2] = "Juscelino Kubitschek";
+		alternativas[12][3] = "Floriano Peixoto";
 
-            // -----------------------------------------------------------------------------------------------------
-            perguntas[15] = "Qual é o país do tango? ";
+		respostas[12] = 'B';
 
-            alternativas[15][0] = "Brasil";
-            alternativas[15][1] = "Espanha";
-            alternativas[15][2] = "Argentina";
-            alternativas[15][3] = "Cuba";
+		
+		perguntas[13] = "Qual é o maior animal do planeta? ";
 
-            respostas[15] = 'C';
+		alternativas[13][0] = "Elefante";
+		alternativas[13][1] = "Tubarão-branco";
+		alternativas[13][2] = "Baleia-azul";
+		alternativas[13][3] = "Girafa";
 
-            // -----------------------------------------------------------------------------------------------------
-            perguntas[16] = "Qual destes números é primo? ";
+		respostas[13] = 'C';
 
-            alternativas[16][0] = "9";
-            alternativas[16][1] = "15";
-            alternativas[16][2] = "21";
-            alternativas[16][3] = "13";
+		
+		perguntas[14] = "Qual é o símbolo químico do ouro? ";
 
-            respostas[16] = 'D';
+		alternativas[14][0] = "Ag";
+		alternativas[14][1] = "Au";
+		alternativas[14][2] = "O";
+		alternativas[14][3] = "Gd";
 
-            // -----------------------------------------------------------------------------------------------------
-            perguntas[17] = "Qual destes países tem o maior território do mundo? ";
+		respostas[14] = 'B';
 
-            alternativas[17][0] = "China";
-            alternativas[17][1] = "Canadá";
-            alternativas[17][2] = "Rússia";
-            alternativas[17][3] = "Estados Unidos";
+		
+		perguntas[15] = "Qual é o país do tango? ";
 
-            respostas[17] = 'C';
+		alternativas[15][0] = "Brasil";
+		alternativas[15][1] = "Espanha";
+		alternativas[15][2] = "Argentina";
+		alternativas[15][3] = "Cuba";
 
-            // -----------------------------------------------------------------------------------------------------
-            perguntas[18] = "Lichia é um tipo de: ";
+		respostas[15] = 'C';
 
-            alternativas[18][0] = "Fruto";
-            alternativas[18][1] = "Queijo";
-            alternativas[18][2] = "Pedra";
-            alternativas[18][3] = "Água";
+		
+		perguntas[16] = "Qual destes números é primo? ";
 
-            respostas[18] = 'A';
+		alternativas[16][0] = "9";
+		alternativas[16][1] = "15";
+		alternativas[16][2] = "21";
+		alternativas[16][3] = "13";
 
-            // -----------------------------------------------------------------------------------------------------
-            perguntas[19] = "Eros era um Deus de qual Mitologia? ";
+		respostas[16] = 'D';
 
-            alternativas[19][0] = "Germânica";
-            alternativas[19][1] = "Japonesa";
-            alternativas[19][2] = "Eslava";
-            alternativas[19][3] = "Grega";
+		
+		perguntas[17] = "Qual destes países tem o maior território do mundo? ";
 
-            respostas[19] = 'D';
-            // -----------------------------------------------------------------------------------------------------
-            perguntas[20] = "Qual é o resultado da equação: 5+5x5+5 ";
+		alternativas[17][0] = "China";
+		alternativas[17][1] = "Canadá";
+		alternativas[17][2] = "Rússia";
+		alternativas[17][3] = "Estados Unidos";
 
-            alternativas[20][0] = "10";
-            alternativas[20][1] = "55";
-            alternativas[20][2] = "35";
-            alternativas[20][3] = "25";
+		respostas[17] = 'C';
+		
 
-            respostas[20] = 'C';
-            // -----------------------------------------------------------------------------------------------------
-            perguntas[21] = "Quantos estados compõem a região Nordeste do Brasil? ";
+		perguntas[18] = "Lichia é um tipo de: ";
 
-            alternativas[21][0] = "7";
-            alternativas[21][1] = "8";
-            alternativas[21][2] = "9";
-            alternativas[21][3] = "10";
+		alternativas[18][0] = "Fruto";
+		alternativas[18][1] = "Queijo";
+		alternativas[18][2] = "Pedra";
+		alternativas[18][3] = "Água";
 
-            respostas[21] = 'C';
-        }
-    }
+		respostas[18] = 'A';
+		
 
+		perguntas[19] = "Eros era um Deus de qual Mitologia? ";
 
-//[   [0], [1], [2], [3]], [ [0], [1], [2], [3]]
-//pergunta   	   0                 1
+		alternativas[19][0] = "Germânica";
+		alternativas[19][1] = "Japonesa";
+		alternativas[19][2] = "Eslava";
+		alternativas[19][3] = "Grega";
 
-// PARA REQUISITOS EXTRAS:
-// Metodo de ajuda(pular, eliminar 2 e ajuda do universitarios)
-// Jogar alternado
-// Condional: Considerando que estão jogando 2 pequenos genios do Domingo com Huck, caso os 2 acertem as 10 perguntas, deu EMPATE
+		respostas[19] = 'D';
+		
+		
+		perguntas[20] = "Qual é o resultado da equação: 5+5x5+5 ";
 
+		alternativas[20][0] = "10";
+		alternativas[20][1] = "55";
+		alternativas[20][2] = "35";
+		alternativas[20][3] = "25";
 
+		respostas[20] = 'C';
+		
+		
+		perguntas[21] = "Quantos estados compõem a região Nordeste do Brasil? ";
 
+		alternativas[21][0] = "7";
+		alternativas[21][1] = "8";
+		alternativas[21][2] = "9";
+		alternativas[21][3] = "10";
+
+		respostas[21] = 'C';
+	}
+}
